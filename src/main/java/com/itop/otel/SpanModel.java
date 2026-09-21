@@ -52,7 +52,7 @@ public class SpanModel {
         StringBuilder sb = new StringBuilder();
 
         if (isSlow) {
-            sb.append("\n============================= [🚨 SLOW SPAN DETECTED] =============================\n");
+            sb.append("\n============================= [SLOW SPAN DETECTED] =============================\n");
         } else {
             sb.append("------------------------------------------------------------------------------------\n");
         }

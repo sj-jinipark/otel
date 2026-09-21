@@ -52,7 +52,7 @@ public class TraceGroup {
         items.sort(Comparator.comparingLong(t -> t.timeNano));
 
         StringBuilder sb = new StringBuilder();
-        sb.append("🆔 [TRACE ID]: ").append(traceId).append("\n");
+        sb.append(" [TRACE ID]: ").append(traceId).append("\n");
 
         long baseNano = (rootStartTimeNano > 0) ? rootStartTimeNano : 
                 (!items.isEmpty() ? items.get(0).timeNano : 0);
@@ -61,10 +61,10 @@ public class TraceGroup {
                 TIME_FORMATTER.format(Instant.ofEpochMilli(baseNano / 1_000_000L)) : "-";
 
         if (isSlow()) {
-            sb.append(String.format("🚨 [%s] [SLOW REQUEST DETECTED (>= 3000ms)]: %s (Total: %,d ms)\n", 
+            sb.append(String.format(" [%s] [SLOW REQUEST DETECTED (>= 3000ms)]: %s (Total: %,d ms)\n", 
                     rootTimeStr, rootPath, totalDurationMs));
         } else {
-            sb.append(String.format("✅ [%s] [REQUEST]: %s (Total: %,d ms)\n", 
+            sb.append(String.format(" [%s] [REQUEST]: %s (Total: %,d ms)\n", 
                     rootTimeStr, rootPath, totalDurationMs));
         }
 
@@ -86,17 +86,17 @@ public class TraceGroup {
 
             if (item.type == ItemType.DUMP) {
                 sb.append(branch).append(prefix)
-                  .append(String.format("🚨 [SLOW CALL STACK DUMP (at %,d ms)]\n", item.dumpOffsetMs));
+                  .append(String.format(" [SLOW CALL STACK DUMP (at %,d ms)]\n", item.dumpOffsetMs));
 
                 String indent = isLast ? "       " : "   │   ";
                 for (String line : item.content.split("\n")) {
                     if (!line.isBlank()) {
-                        sb.append(indent).append("🔥 ").append(line.trim()).append("\n");
+                        sb.append(indent).append("- ").append(line.trim()).append("\n");
                     }
                 }
             } else {
                 sb.append(branch).append(prefix)
-                  .append("💾 [SQL ").append(sqlIndex++).append("] ")
+                  .append(" [SQL ").append(sqlIndex++).append("] ")
                   .append(item.content.replaceAll("\\s+", " ").trim())
                   .append("\n");
             }

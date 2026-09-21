@@ -41,10 +41,10 @@ public class HttpOtlpReceiver {
                     System.out.println("\n================ [OTLP RAW PACKET RECEIVED] ================");
                     for (ResourceSpans rs : request.getResourceSpansList()) {
                         for (ScopeSpans ss : rs.getScopeSpansList()) {
-                            System.out.println("📦 InstrumentationScope: " + ss.getScope().getName() + ", Spans Count: " + ss.getSpansCount());
+                            System.out.println(" InstrumentationScope: " + ss.getScope().getName() + ", Spans Count: " + ss.getSpansCount());
 
                             for (Span span : ss.getSpansList()) {
-                                System.out.println("\n  🔹 Span Name: " + span.getName());
+                                System.out.println("\n  - Span Name: " + span.getName());
                                 System.out.println("     Kind: " + span.getKind());
                                 System.out.println("     TraceId: " + bytesToHex(span.getTraceId().toByteArray()));
                                 System.out.println("     SpanId : " + bytesToHex(span.getSpanId().toByteArray()));
@@ -52,12 +52,12 @@ public class HttpOtlpReceiver {
 
                                 // 1. Span Attributes(태그) 확인
                                 for (KeyValue attr : span.getAttributesList()) {
-                                    System.out.println("     🏷️ [Attr] " + attr.getKey() + " = " + attr.getValue().getStringValue());
+                                    System.out.println("      [Attr] " + attr.getKey() + " = " + attr.getValue().getStringValue());
                                 }
 
                                 // 2. Span Events(스택 덤프) 확인
                                 for (Span.Event event : span.getEventsList()) {
-                                    System.out.println("     🚨 [Event] " + event.getName());
+                                    System.out.println("      [Event] " + event.getName());
                                     for (KeyValue evAttr : event.getAttributesList()) {
                                         System.out.println("        └─ " + evAttr.getKey() + " : " + evAttr.getValue().getStringValue());
                                     }
