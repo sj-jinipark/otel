@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.itop</groupId>
+  <artifactId>otel</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>otel</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<grpc.version>1.62.2</grpc.version>
+    <protobuf.version>3.25.3</protobuf.version>
+  </properties>
+
+  <dependencies>
+    <!-- 데이터 파싱 모델 (이 jar 안에 ExportTraceServiceRequest가 들어있음) -->
+    <dependency>
+        <groupId>io.opentelemetry.proto</groupId>
+        <artifactId>opentelemetry-proto</artifactId>
+        <version>1.1.0-alpha</version>
+    </dependency>
+
+    <!-- Protobuf -> JSON 출력용 유틸 -->
+    <dependency>
+        <groupId>com.google.protobuf</groupId>
+        <artifactId>protobuf-java-util</artifactId>
+        <version>${protobuf.version}</version>
+    </dependency>
+    
+  </dependencies>
+</project>
