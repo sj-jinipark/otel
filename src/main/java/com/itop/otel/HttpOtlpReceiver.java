@@ -35,38 +35,6 @@ public class HttpOtlpReceiver {
                 try (InputStream is = exchange.getRequestBody()) {
                     ExportTraceServiceRequest request = ExportTraceServiceRequest.parseFrom(is.readAllBytes());
 
-                    // =========================================================================
-                    // ⭐ [디버깅 로그] OTLP 수신 원본 데이터 검사
-                    // =========================================================================
-                    System.out.println("\n================ [OTLP RAW PACKET RECEIVED] ================");
-                    for (ResourceSpans rs : request.getResourceSpansList()) {
-                        for (ScopeSpans ss : rs.getScopeSpansList()) {
-                            System.out.println(" InstrumentationScope: " + ss.getScope().getName() + ", Spans Count: " + ss.getSpansCount());
-
-                            for (Span span : ss.getSpansList()) {
-                                System.out.println("\n  - Span Name: " + span.getName());
-                                System.out.println("     Kind: " + span.getKind());
-                                System.out.println("     TraceId: " + bytesToHex(span.getTraceId().toByteArray()));
-                                System.out.println("     SpanId : " + bytesToHex(span.getSpanId().toByteArray()));
-                                System.out.println("     ParentSpanId: " + bytesToHex(span.getParentSpanId().toByteArray()));
-
-                                // 1. Span Attributes(태그) 확인
-                                for (KeyValue attr : span.getAttributesList()) {
-                                    System.out.println("      [Attr] " + attr.getKey() + " = " + attr.getValue().getStringValue());
-                                }
-
-                                // 2. Span Events(스택 덤프) 확인
-                                for (Span.Event event : span.getEventsList()) {
-                                    System.out.println("      [Event] " + event.getName());
-                                    for (KeyValue evAttr : event.getAttributesList()) {
-                                        System.out.println("        └─ " + evAttr.getKey() + " : " + evAttr.getValue().getStringValue());
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    System.out.println("============================================================\n");
-
                     // 기존 비동기 누적 병합 처리
                     TraceParser.ingestBatch(request);
 
