@@ -16,8 +16,11 @@ import java.util.Set;
 public class TraceParser {
 
     private static final long THREE_SECONDS_NANOS = 3_000_000_000L;
+
+    // 실제 에이전트가 전송하는 stack.trace 및 slow.stack_dump 추가
     private static final Set<String> STACK_KEYS = Set.of(
-            "slow.stacktrace", "thread.stacktrace", "stacktrace", "exception.stacktrace"
+            "stack.trace", "slow.stack_dump", "slow.stacktrace", 
+            "thread.stacktrace", "stacktrace", "exception.stacktrace"
     );
 
     public static void ingestBatch(ExportTraceServiceRequest request) {
@@ -47,7 +50,8 @@ public class TraceParser {
                     for (Span.Event ev : span.getEventsList()) {
                         String dump = findMatchingAttr(ev.getAttributesList(), STACK_KEYS);
                         if (dump != null) {
-                            long offset = getLongAttr(ev.getAttributesList(), "elapsed_ms", 3000L);
+                            long offset = getLongAttr(ev.getAttributesList(), "elapsed_ms", 
+                                          getLongAttr(ev.getAttributesList(), "elapsed.ms", 3000L));
                             long eventTime = ev.getTimeUnixNano() > 0 ? ev.getTimeUnixNano() : (startNano + (offset * 1_000_000L));
                             group.addDump(eventTime, offset, dump);
                             dumpFound = true;
@@ -61,8 +65,9 @@ public class TraceParser {
                         }
                     }
 
-                    // 3. SQL 문 수집
-                    String dbStatement = getStringAttr(span.getAttributesList(), "db.statement", null);
+                    // 3. SQL 문 수집: db.query.text(최신) 및 db.statement(구버전) 동시 대응
+                    String dbStatement = getStringAttr(span.getAttributesList(), "db.query.text",
+                                         getStringAttr(span.getAttributesList(), "db.statement", null));
                     if (dbStatement != null && !dbStatement.isBlank()) {
                         group.addSql(startNano, dbStatement);
                     }

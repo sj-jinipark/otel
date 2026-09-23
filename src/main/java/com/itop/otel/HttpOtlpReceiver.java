@@ -1,19 +1,15 @@
 package com.itop.otel;
 
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
-import io.opentelemetry.proto.collector.trace.v1.ExportTraceServiceRequest;
-// ⭐ 아래 import 추가
-import io.opentelemetry.proto.trace.v1.ResourceSpans;
-import io.opentelemetry.proto.trace.v1.ScopeSpans;
-import io.opentelemetry.proto.trace.v1.Span;
-import io.opentelemetry.proto.common.v1.KeyValue;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
+
+import io.opentelemetry.proto.collector.trace.v1.ExportTraceServiceRequest;
 
 public class HttpOtlpReceiver {
 
@@ -32,9 +28,15 @@ public class HttpOtlpReceiver {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            	
                 try (InputStream is = exchange.getRequestBody()) {
                     ExportTraceServiceRequest request = ExportTraceServiceRequest.parseFrom(is.readAllBytes());
 
+                    // ⭐ 원시 데이터 전체 덤프 출력
+                    //System.out.println("\n################### [OTLP RAW PROTO DUMP START] ###################");
+                    //System.out.println(request.toString());
+                    //System.out.println("################### [OTLP RAW PROTO DUMP END] #####################\n");
+                    
                     // 기존 비동기 누적 병합 처리
                     TraceParser.ingestBatch(request);
 

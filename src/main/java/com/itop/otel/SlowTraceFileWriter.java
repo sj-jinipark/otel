@@ -93,7 +93,7 @@ public class SlowTraceFileWriter {
             }
             currentWriter.flush();
         } catch (IOException e) {
-            System.err.println("❌ Failed to write slow trace log to file: " + e.getMessage());
+            System.err.println(" Failed to write slow trace log to file: " + e.getMessage());
         }
     }
 
